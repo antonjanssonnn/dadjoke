@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pappaskämt – Sveriges roligaste skämt för hela familjen</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f7f9fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      color: #333;
+      position: relative;
+    }
+
+    /* Centrering container */
+    .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    /* Skämt */
+    #jokeBox {
+      font-size: 2rem;
+      font-weight: 700;
+      max-width: 800px;
+      line-height: 1.5;
+      padding: 0 20px;
+      color: #444;
+      transition: opacity 0.4s ease;
+      position: relative;
+    }
+    #jokeBox::before, #jokeBox::after {
+      content: '"';
+      font-size: 3rem;
+      color: #bbb;
+      position: absolute;
+    }
+    #jokeBox::before { left: -20px; top: -10px; }
+    #jokeBox::after { right: -20px; bottom: -15px; }
+
+    /* Knapp */
+    button {
+      margin-top: 40px;
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+      transition: all 0.25s ease;
+    }
+    button:hover {
+      background: #f1f3f5;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.08);
+    }
+
+    /* Footer */
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    /* Hamburger-meny ikon */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 30px;
+      height: 22px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .hamburger span {
+      display: block;
+      height: 4px;
+      background: #333;
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* Sidopanel */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -500px; /* <-- Viktigt, gömd från start */
+      width: 300px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .sidebar.active { right: 0; }
+    .sidebar h2 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #444;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar ul li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar ul li:hover {
+      color: #0077cc;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 999;
+    }
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hamburgare -->
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+
+  <!-- Sidopanel -->
+  <div class="sidebar" id="sidebar">
+    <h2>Alla pappaskämt</h2>
+    <ul id="jokeList"></ul>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <!-- Innehåll -->
+  <div class="content">
+    <div id="jokeBox">Laddar skämt...</div>
+    <button onclick="newJoke()">Nytt skämt</button>
+  </div>
+
+  <!-- Footer -->
+  <footer>© Pappaskämt</footer>
+
+  <script>
+    const jokes = [
+      "Vad kallar man en fisk utan ögon? – Fsk.",
+      "Jag sa till min fru att hon ritade sina ögonbryn för högt. Hon såg förvånad ut.",
+      "Varför gick kycklingen över vägen? – För att den skulle till andra sidan.",
+      "Hur får man en servett att dansa? – Man lägger lite boogie i den.",
+      "Jag försökte fånga lite dimma igår… jag miss-tog mig.",
+      "Vad kallar man en snöman på sommaren? – En pöl.",
+      "Varför gillar inte skelett att slåss? – De har inget hjärta.",
+      "Jag drack lite bläck… nu känns det som jag är lite markerad.",
+      "Min dator åt upp min uppsats… den har många bytes.",
+      "Varför kan inte en cykel stå upp själv? – Den är två-trött."
+    ];
+
+    function newJoke() {
+      const box = document.getElementById("jokeBox");
+      box.style.opacity = 0;
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * jokes.length);
+        box.textContent = jokes[randomIndex];
+        box.style.opacity = 1;
+      }, 200);
+    }
+
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+      document.getElementById("overlay").classList.toggle("active");
+    }
+
+    // Fyll sidomenyn med skämt
+    const jokeList = document.getElementById("jokeList");
+    jokes.forEach(j => {
+      const li = document.createElement("li");
+      li.textContent = j;
+      li.onclick = () => {
+        document.getElementById("jokeBox").textContent = j;
+        toggleMenu();
+      };
+      jokeList.appendChild(li);
+    });
+
+    // Visa första skämtet
+    newJoke();
+  </script>
+
+</body>
+</html>
